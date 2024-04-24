@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 typedef struct {
 	int u;
@@ -11,7 +12,7 @@ void bellmanFord(EDGE* edges, int E, int V, int src);
 void printRoute(int* route, int dest);
 
 int main(){
-	int V, E, i;
+	int V, E, i, src;
 	EDGE* edges;
 	
 	scanf("%d %d", &V, &E);
@@ -22,13 +23,15 @@ int main(){
 		scanf("%d %d %d", &edges[i].u, &edges[i].v, &edges[i].weight);
 	}
 	
-	bellmanFord(edges, E, V, 0);
+	scanf("%d", &src);
+	
+	bellmanFord(edges, E, V, src);
 	
 	return 0;
 }
 
 void bellmanFord(EDGE* edges, int E, int V, int src){
-	int *dist = (int*) malloc(V * sizeof(int));
+	long long *dist = (long long*) malloc(V * sizeof(long long));
 	int *parent = (int*) malloc(V * sizeof(int));
 	int i, j;
 	
@@ -41,7 +44,7 @@ void bellmanFord(EDGE* edges, int E, int V, int src){
 	
 	for(i=0;i<V-1;i++){
 		for(j=0;j<E;j++){
-			if((dist[edges[j].u] != INT_MAX) && (dist[edges[j].v] > dist[edges[j].u] + edges[j].weight)){
+			if(dist[edges[j].u] != INT_MAX && dist[edges[j].v] > dist[edges[j].u] + edges[j].weight){
 				dist[edges[j].v] = dist[edges[j].u] + edges[j].weight;
 				parent[edges[j].v] = edges[j].u;
 			}
@@ -50,7 +53,7 @@ void bellmanFord(EDGE* edges, int E, int V, int src){
 	
 	//to look whether there is negative cycle
 	for(i=0;i<E;i++){
-		if((dist[edges[i].u] != INT_MAX) && (dist[edges[i].v] > dist[edges[i].u] + edges[i].weight)){
+		if(dist[edges[i].u] != INT_MAX && dist[edges[i].v] > dist[edges[i].u] + edges[i].weight){
 			printf("There is a negative cycle...\n");
 			free(parent);
 			free(dist);
